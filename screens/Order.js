@@ -145,6 +145,14 @@ const Order = ({ navigation, route, appTheme }) => {
         );
     }
 
+    function renderSideBar() {
+        return(
+            <View>
+                
+            </View>
+        )
+    }
+
     return (
       <View style={styles.container}>
         {/* header */}
@@ -160,7 +168,21 @@ const Order = ({ navigation, route, appTheme }) => {
             borderTopRightRadius: 40,
           }}
         >
+            {/* Tab bar */}
         {renderTopTabBarSection()}
+
+        {/* side bar & listing */}
+        <View
+            style={{
+                flex : 1,
+                flexDirection:'row'
+            }}
+        >
+            {/* side bar */}
+            {renderSideBar()}
+
+            {/* listing */}
+        </View>
 
         </View>
       </View>
