@@ -11,19 +11,28 @@ import {
 } from 'react-native';
 
 import { connect } from 'react-redux'
+import Svg, {Circle} from 'react-native-svg';
 
-import { IconButton, TabButton } from "../components";
+import { IconButton, TabButton, VerticalTextButton } from "../components";
 import { dummyData, COLORS, FONTS, SIZES, icons } from "../constants";
+import { menuList } from '../constants/dummy';
 
 const Order = ({ navigation, route, appTheme }) => {
 
     const [selectedLocation, setSelectedLocation] = React.useState(null)
     const [selectedTab, setSelectedTab] = React.useState(0);
+    const [selectedCategory, setSelectedCategory] = React.useState("Milk Tea")
+    const [menu, setMenu] = React.useState(null)
 
     React.useEffect(() => {
         let { selectedLocation } = route.params
         setSelectedLocation(selectedLocation)
-    })
+    }, [])
+
+    React.useEffect(() => {
+      let menuList = dummyData.menuList.filter(menuList => menuList.category == selectedCategory)
+      setMenu(menuList)
+    }, [selectedCategory])
 
     function renderHeaderSection() {
         return (
@@ -146,11 +155,71 @@ const Order = ({ navigation, route, appTheme }) => {
     }
 
     function renderSideBar() {
-        return(
-            <View>
-                
+        return (
+          <View>
+            <Svg height="65" width="65" viewBox="0 0 65 65">
+              <Circle cx="5" cy="60" r="60" fill={COLORS.primary} />
+            </Svg>
+            <View
+              style={{
+                marginTop: -10,
+                width: 65,
+                backgroundColor: COLORS.primary,
+                alignItems: "center",
+                justifyContent: "center",
+                zIndex: 1,
+              }}
+            >
+              <VerticalTextButton
+                label="Snack"
+                selected={selectedCategory == "Snack"}
+                onPress={() => setSelectedCategory("Snack")}
+              />
+
+              <VerticalTextButton
+                label="Coffee"
+                containerStyle={{
+                  marginTop: 45,
+                }}
+                selected={selectedCategory == "Coffee"}
+                onPress={() => setSelectedCategory("Coffee")}
+              />
+
+              <VerticalTextButton
+                label="Smoothie"
+                containerStyle={{
+                  marginTop: 55,
+                  width: 100,
+                }}
+                selected={selectedCategory == "Smoothie"}
+                onPress={() => setSelectedCategory("Smoothie")}
+              />
+
+              <VerticalTextButton
+                label="Spocialtea"
+                containerStyle={{
+                  marginTop: 75,
+                  width: 100,
+                }}
+                selected={selectedCategory == "Spocialtea"}
+                onPress={() => setSelectedCategory("Spocialtea")}
+              />
+
+              <VerticalTextButton
+                label="Milk Tea"
+                containerStyle={{
+                  marginTop: 65,
+                  width: 100,
+                }}
+                selected={selectedCategory == "Milk Tea"}
+                onPress={() => setSelectedCategory("Milk Tea")}
+              />
             </View>
-        )
+            <Svg height="65" width="65" viewBox="0 0 65 65">
+              <Circle cx="5" cy="0" r="60" fill={COLORS.primary} />
+            </Svg>
+          </View>
+        );
     }
 
     return (
@@ -163,7 +232,7 @@ const Order = ({ navigation, route, appTheme }) => {
           style={{
             flex: 1,
             backgroundColor: appTheme.backgroundColor,
-            marginTop: -55,
+            marginTop: -70,
             borderTopLeftRadius: 40,
             borderTopRightRadius: 40,
           }}
@@ -182,6 +251,82 @@ const Order = ({ navigation, route, appTheme }) => {
             {renderSideBar()}
 
             {/* listing */}
+            <FlatList 
+              contentContainerStyle={{
+                marginTop: SIZES.padding,
+                paddingBottom: 50
+              }}
+              data={menu}
+              keyExtractor={item => item.id}
+              renderItem={({item, index}) => {
+                return(
+                  <TouchableWithoutFeedback
+                    onPress={() => navigation.navigate("OrderDetail", { selectedItem: item })}
+                  >
+                    <View
+                      style={{
+                        height: 150,
+                        paddingHorizontal: SIZES.padding,
+                        marginTop: index > 0 ? SIZES.padding : 0,
+                        alignItems: 'flex-end',
+                        justifyContent: 'flex-end'
+                      }}
+                    >
+                      {/* thumbnail */}
+                      <View
+                        style={{
+                          position: 'absolute',
+                          top: 0,
+                          left: SIZES.padding,
+                          width: 130,
+                          height: 140,
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          borderRadius: SIZES.radius,
+                          backgroundColor: COLORS.lightYellow,
+                          zIndex: 1
+                        }}
+                      >
+                        <Image
+                          source={item.thumbnail}
+                          resizeMode="contain"
+                          style={{
+                            width: 100,
+                            height: 100
+                          }}
+                        /> 
+                      </View>
+
+                      {/* detail */}
+                      <View
+                        style={{
+                          width: "70%",
+                          height: "85%",
+                          paddingLeft: "22%",
+                          paddingRight: SIZES.base,
+                          paddingVertical: SIZES.base,
+                          borderRadius: SIZES.radius,
+                          justifyContent: 'space-between',
+                          backgroundColor: COLORS.primary
+                        }}
+                      >
+                        <Text style={{
+                          color: COLORS.white,
+                          ...FONTS.h2,
+                          fontSize: 18,
+                          lineHeight: 25
+                        }} > {item.name} </Text>
+                        <Text style={{
+                          color: COLORS.lightYellow,
+                          ...FONTS.h2,
+                          fontSize: 18
+                        }} > {item.price} </Text>
+                      </View>
+                    </View>
+                  </TouchableWithoutFeedback>
+                )
+              }}
+            />
         </View>
 
         </View>
